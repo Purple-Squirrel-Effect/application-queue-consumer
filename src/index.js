@@ -1,4 +1,4 @@
-import { resend } from 'resend';
+import { Resend } from 'resend';
 
 /**
  * Welcome to Cloudflare Workers!
