@@ -69,8 +69,10 @@ compatibility_date = "2024-05-12"
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces
 [[kv_namespaces]]
-binding = "KV"
+binding = "ApplicationsKV"
 id = "03005a899c6740839b69adc00b97d3ba"
+binding = "CompaniesKV"
+id = "ed08e35b9868412cbdb98579c6a956e7"
 
 # Bind an mTLS certificate. Use to present a client certificate when communicating with another service.
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#mtls-certificates
