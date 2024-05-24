@@ -12,27 +12,28 @@
  */
 
 export default {
-	// Our fetch handler is invoked on a HTTP request: we can send a message to a queue
-	// during (or after) a request.
-	// https://developers.cloudflare.com/queues/platform/javascript-apis/#producer
-	async fetch(req, env, ctx) {
-		// To send a message on a queue, we need to create the queue first
-		// https://developers.cloudflare.com/queues/get-started/#3-create-a-queue
-		await env.MY_QUEUE.send({
-			url: req.url,
-			method: req.method,
-			headers: Object.fromEntries(req.headers),
-		});
-		return new Response('Sent message to the queue');
-	},
-	// The queue handler is invoked when a batch of messages is ready to be delivered
-	// https://developers.cloudflare.com/queues/platform/javascript-apis/#messagebatch
 	async queue(batch, env) {
-		// A queue consumer can make requests to other endpoints on the Internet,
-		// write to R2 object storage, query a D1 Database, and much more.
-		for (let message of batch.messages) {
-			// Process each message (we'll just log these)
-			console.log(`message ${message.id} processed: ${JSON.stringify(message.body)}`);
+		for (const message of batch.messages) {
+			const email = message.body.email;
+			const application = message.body;
+
+			try {
+				const value = await env.KV.get(email);
+				let existingApplications;
+				if (value) {
+					existingApplications = JSON.parse(value);
+				} else {
+					existingApplications = [];
+				}
+				existingApplications.push(application);
+				await env.KV.put(email, JSON.stringify(existingApplications));
+			} catch (error) {
+				console.error('Error processing message:', error);
+				// Re-queue or send to failure queue based on your chosen approach
+				return Promise.reject(error);
+			}
 		}
+
+		return Promise.resolve(); // Indicate successful processing of all messages
 	},
 };
