@@ -71,6 +71,8 @@ compatibility_date = "2024-05-12"
 [[kv_namespaces]]
 binding = "ApplicationsKV"
 id = "03005a899c6740839b69adc00b97d3ba"
+
+[[kv_namespaces]]
 binding = "CompaniesKV"
 id = "ed08e35b9868412cbdb98579c6a956e7"
 
