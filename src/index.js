@@ -33,7 +33,6 @@ export default {
 				return Promise.reject(error);
 			}
 		}
-
 		return Promise.resolve(); // Indicate successful processing of all messages
 	},
 };
