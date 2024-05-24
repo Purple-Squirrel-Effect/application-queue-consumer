@@ -1,3 +1,5 @@
+import { resend } from 'resend';
+
 /**
  * Welcome to Cloudflare Workers!
  *
@@ -16,6 +18,21 @@ export default {
 		for (const message of batch.messages) {
 			const email = message.body.email;
 			const application = message.body;
+
+			// Initiate the resend sender using the environment variable RESEND_API_KEY
+			const resend = new Resend(env.RESEND_API_KEY);
+
+			const sentEmail = await resend.emails.send({
+				from: 'Genius <noreply@wearegenius.nl>',
+				to: ['pieter@experiencerepublic.nl'],
+				subject: 'Nieuwe sollicitatie',
+				html: `
+					<p>Er is een nieuwe sollicitatie binnengekomen!</p>
+					<p>Naam: ${application.name}</p>
+					<p>Email: ${application.email}</p>
+					<p>Telefoonnummer: ${application.phone}</p>
+				`,
+			});
 
 			try {
 				const value = await env.KV.get(email);
