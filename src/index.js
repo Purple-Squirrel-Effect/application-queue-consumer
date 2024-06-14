@@ -16,18 +16,14 @@ import { Resend } from 'resend';
 export default {
 	async queue(batch, env) {
 		for (const message of batch.messages) {
-			const email = message.body.email;
 			const application = message.body;
-			// Turn the companyName to lowercase.
+			const email = application.email;
 			const companyName = application.companyName.toLowerCase();
 
 			// Try to fetch the value from the KV CompaniesKV, using the companyName as key.
 			const companyValue = await env.CompaniesKV.get(companyName);
-			const companyEmailAddress = JSON.parse(companyValue).email;
-
-			// If there is an emailaddress on record, try to send the email.
-			// Test what happens if there is no emailaddress on record.
-			if (companyEmailAddress) {
+			if (companyValue) {
+				const companyEmailAddress = JSON.parse(companyValue).email;
 				try {
 					const resend = new Resend(env.RESEND_API_KEY);
 					const sentEmail = await resend.emails.send({
@@ -48,10 +44,10 @@ export default {
 			}
 
 			try {
-				const value = await env.ApplicationsKV.get(email);
+				const existingValue = await env.ApplicationsKV.get(email);
 				let existingApplications;
-				if (value) {
-					existingApplications = JSON.parse(value);
+				if (existingValue) {
+					existingApplications = JSON.parse(existingValue);
 				} else {
 					existingApplications = [];
 				}
