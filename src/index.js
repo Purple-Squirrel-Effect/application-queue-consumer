@@ -27,7 +27,7 @@ export default {
 				try {
 					const resend = new Resend(env.RESEND_API_KEY);
 					const sentEmail = await resend.emails.send({
-						from: 'Genius <noreply@wearegenius.nl>',
+						from: 'Genius <noreply@nutzy.nl>',
 						to: [companyEmailAddress],
 						subject: 'Nieuwe sollicitatie',
 						html: `
